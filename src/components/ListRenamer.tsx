@@ -74,8 +74,8 @@ export function ListRenamer() {
     return output;
   }, [previewList, action, dryRun]);
 
-  const handleCopy = async () => {
-    const success = await copyToClipboard(script);
+  const handleCopy = () => {
+    const success = copyToClipboard(script);
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

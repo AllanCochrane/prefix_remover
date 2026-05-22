@@ -5,18 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export async function copyToClipboard(text: string): Promise<boolean> {
-  // Try modern Clipboard API first
-  if (navigator?.clipboard && navigator.clipboard.writeText) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch (err) {
-      console.warn("Clipboard API failed, falling back to execCommand", err);
-    }
-  }
+export function copyToClipboard(text: string): boolean {
+  let successful = false;
   
-  // Fallback for sandboxed iframes (like AI Studio preview) or older browsers
+  // Apply fallback first synchronously. This MUST run in the exact same call stack 
+  // as the click event gesture to work in restrictive iframes.
   try {
     const textArea = document.createElement("textarea");
     textArea.value = text;
@@ -31,13 +24,25 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     textArea.focus();
     textArea.select();
 
-    const successful = document.execCommand('copy');
+    successful = document.execCommand('copy');
     document.body.removeChild(textArea);
-    return successful;
   } catch (err) {
     console.error('Fallback clipboard copy failed', err);
-    return false;
   }
+
+  if (successful) {
+    return true;
+  }
+
+  // Modern API as a secondary attempt (will run async but we return true immediately if fallback failed)
+  if (navigator?.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(err => {
+      console.warn("Clipboard API failed", err);
+    });
+    return true; // Assume it will succeed or user will get a prompt
+  }
+  
+  return false;
 }
 
 export function generateBashCommand(directory: string, prefix: string, action: 'rename' | 'delete' = 'rename', dryRun: boolean = false): string {

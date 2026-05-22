@@ -16,8 +16,8 @@ export function CommandGenerator() {
     ? generateBashCommand(directory, prefix, action, dryRun)
     : generatePowerShellCommand(directory, prefix, action, dryRun);
 
-  const handleCopy = async () => {
-    const success = await copyToClipboard(command);
+  const handleCopy = () => {
+    const success = copyToClipboard(command);
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
