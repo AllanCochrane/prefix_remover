@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Copy, Terminal, Download, CheckCircle2, FileCode2, Play, AlertTriangle } from 'lucide-react';
-import { generateBashCommand, generatePowerShellCommand, cn } from '../utils';
+import { generateBashCommand, generatePowerShellCommand, cn, copyToClipboard } from '../utils';
 
 export function CommandGenerator() {
   const [directory, setDirectory] = useState('/mnt/media/TV/FBI/Season 8');
@@ -16,10 +16,12 @@ export function CommandGenerator() {
     ? generateBashCommand(directory, prefix, action, dryRun)
     : generatePowerShellCommand(directory, prefix, action, dryRun);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(command);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    const success = await copyToClipboard(command);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const handleDownload = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Copy, CheckCircle2, Play, AlertTriangle } from 'lucide-react';
-import { cn } from '../utils';
+import { cn, copyToClipboard } from '../utils';
 
 export function ListRenamer() {
   const [inputList, setInputList] = useState('');
@@ -14,7 +14,10 @@ export function ListRenamer() {
   const previewList = useMemo(() => {
     if (!inputList.trim()) return [];
     
-    return inputList.split('\n').filter(line => line.trim() !== '').map(line => {
+    return inputList.split('\n').filter(line => line.trim() !== '').map(rawLine => {
+      // Remove trailing \r from Windows clipboard to prevent filename distortion
+      const line = rawLine.endsWith('\r') ? rawLine.slice(0, -1) : rawLine;
+      
       // Support both forward slashes and backslashes for path splitting
       const isWindowsPath = line.includes('\\') && !line.includes('/');
       const separator = isWindowsPath ? '\\' : '/';
@@ -71,10 +74,12 @@ export function ListRenamer() {
     return output;
   }, [previewList, action, dryRun]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(script);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    const success = await copyToClipboard(script);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const executeOnServer = async () => {
@@ -225,15 +230,15 @@ export function ListRenamer() {
                       <td className={cn("px-6 py-3 font-mono text-[12px] max-w-xs truncate", item.changed && action === 'delete' ? "text-red-700" : "text-slate-700")} title={item.base}>
                         {item.changed && prefix && action !== 'delete' ? (
                           <>
-                            <span className="text-red-500 bg-red-50 px-0.5 rounded-sm">{prefix}</span>
-                            {item.base.slice(prefix.length)}
+                            <span className="text-red-500 bg-red-50 px-0.5 rounded-sm whitespace-pre">{prefix}</span>
+                            <span className="whitespace-pre">{item.base.slice(prefix.length)}</span>
                           </>
                         ) : (
-                          item.base
+                          <span className="whitespace-pre">{item.base}</span>
                         )}
                       </td>
                       <td className={cn("px-6 py-3 font-mono text-[12px] max-w-xs truncate", item.changed ? (action === 'delete' ? "text-red-500 line-through" : "text-blue-600 font-medium") : "text-slate-500")} title={item.newBase || ""}>
-                        {action === 'delete' && item.changed ? "DELETED" : item.newBase}
+                        <span className="whitespace-pre">{action === 'delete' && item.changed ? "DELETED" : item.newBase}</span>
                       </td>
                     </tr>
                   ))}

@@ -5,6 +5,41 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export async function copyToClipboard(text: string): Promise<boolean> {
+  // Try modern Clipboard API first
+  if (navigator?.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (err) {
+      console.warn("Clipboard API failed, falling back to execCommand", err);
+    }
+  }
+  
+  // Fallback for sandboxed iframes (like AI Studio preview) or older browsers
+  try {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    
+    // Prevent scrolling to the bottom of the page
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textArea);
+    return successful;
+  } catch (err) {
+    console.error('Fallback clipboard copy failed', err);
+    return false;
+  }
+}
+
 export function generateBashCommand(directory: string, prefix: string, action: 'rename' | 'delete' = 'rename', dryRun: boolean = false): string {
   const safeDir = directory.replace(/'/g, "'\\''");
   const safePrefix = prefix.replace(/'/g, "'\\''");
