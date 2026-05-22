@@ -1,20 +1,31 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Prefix Remover
 
-# Run and deploy your AI Studio app
+Prefix Remover is a local file management utility designed to help you safely and quickly batch rename or delete files by matching a specific prefix. It is particularly useful for cleaning up media files, downloads, or log files that have repetitive, unwanted text at the start of their names.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/7eefba63-322c-4c9a-a1fe-1ef476bf8c8e
+- **Dynamic Command Generation:** Generates safe, optimized Bash (Linux/Mac) and PowerShell (Windows) scripts to rename or delete files in place safely.
+- **Manual List Parsing:** Paste in a list of file paths (e.g., from `ls` or `find`) to manually review and generate targeted scripts.
+- **Local Server Execution:** Execute rename and delete operations directly through the web interface (requires running the app locally).
+- **Dry Run Mode:** Preview exactly which files will be affected before making any permanent changes. 
 
-## Run Locally
+## About the Gemini API Key
 
-**Prerequisites:**  Node.js
+You might have noticed an `.env.example` file referencing a `GEMINI_API_KEY` or prompts for it in your environment. **This application does not actually require or use the Gemini AI API.** 
 
+The AI Studio environment includes these references by default for templates, but since Prefix Remover is a purely deterministic local filesystem utility, no AI API key is needed to run it.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Running Locally
+
+Because this application interacts directly with your filesystem to rename or delete files, it is best run locally on your own machine.
+
+1. Clone or download the project files.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser. The server will now have access to your local filesystem to safely rename and clean up your files.

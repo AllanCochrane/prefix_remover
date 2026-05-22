@@ -100,7 +100,7 @@ async function startServer() {
              // For rename, use newBase and dir
              const isWindowsPath = item.original.includes('\\') && !item.original.includes('/');
              const separator = isWindowsPath ? '\\' : '/';
-             const targetPath = item.dir ? \`\${item.dir}\${separator}\${item.newBase}\` : item.newBase;
+             const targetPath = item.dir ? `${item.dir}${separator}${item.newBase}` : item.newBase;
              await fs.rename(item.original, targetPath);
              processed++;
           }
