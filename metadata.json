@@ -1,0 +1,6 @@
+{
+  "name": "Prefix Remover",
+  "description": "Generate safe shell scripts to batch rename files by removing specific prefixes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
