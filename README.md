@@ -24,8 +24,12 @@ Because this application interacts directly with your filesystem to rename or de
    ```bash
    npm install
    ```
-3. Start the development server:
+3. Start the development server (defaults to port 3000):
    ```bash
    npm run dev
    ```
-4. Open [http://localhost:3000](http://localhost:3000) in your browser. The server will now have access to your local filesystem to safely rename and clean up your files.
+   *To run on a different port, set the `PORT` environment variable:*
+   ```bash
+   PORT=8080 npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) (or your custom port) in your browser. The server will now have access to your local filesystem to safely rename and clean up your files.
